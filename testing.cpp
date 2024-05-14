@@ -1,20 +1,23 @@
 #include <cstdlib>
-using namespace std;
 #include <GL/glut.h>
 
-enum Color {WHITE, BROWN, ORANGE, GREY, BLUE, DARK_GREY, YELLOW, GREEN,BLACK};
+enum Color {WHITE, BROWN, ORANGE, GREY, BLUE, DARK_GREY, YELLOW, GREEN, BLACK};
 
-struct RGBColor{
+struct RGBColor {
     float red;
     float green;
     float blue;
 };
 
-// translation
+// Translation
 float X = 0, Y = 0, Z = 0;
-// rotation
+// Rotation
 float I = 0, J = 0, K = 0;
 float SCALE = 1;
+
+bool isDoorClosed = true;
+bool areWindowsClosed = true;
+
 
 void applyTranslationRotation() {
     glTranslatef(X, Y, Z);
@@ -24,18 +27,18 @@ void applyTranslationRotation() {
 }
 
 
-RGBColor colorFactory(Color c){
+RGBColor colorFactory(Color c) {
     switch(c) {
         case WHITE:
-            return {0.90,0.90,0.90};
+            return {0.90, 0.90, 0.90};
         case BROWN:
-            return {0.45,0.35,0.25};
+            return {0.45, 0.35, 0.25};
         case GREY:
-            return {0.8,0.8,0.8};
+            return {0.8, 0.8, 0.8};
         case DARK_GREY:
-            return {04,0.4,0.4};
+            return {0.4, 0.4, 0.4};
         case BLUE:
-            return {0.6,0.75,0.85};
+            return {0.6, 0.75, 0.85};
         case ORANGE:
             return {0.75, 0.25, 0};
         case YELLOW:
@@ -43,13 +46,13 @@ RGBColor colorFactory(Color c){
         case GREEN:
             return {0, 0.5, 0};
         case BLACK:
-            return {0,0,0};
+            return {0, 0, 0};
         default:
-            return {0,0,0};
+            return {0, 0, 0};
     }
 }
 
-void setDrawingColor(Color color){
+void setDrawingColor(Color color) {
     RGBColor drawingColor = colorFactory(color);
     glColor3f(drawingColor.red, drawingColor.green, drawingColor.blue);
 }
@@ -97,7 +100,6 @@ void drawCube(float x, float y, float z, float length) {
     glDrawArrays(GL_QUADS, 0, 5 * 4);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
-
 
 void drawCuboid(float x, float y, float z, float width, float height, float depth) {
     GLfloat vertices[] = {
@@ -163,7 +165,7 @@ void drawRoof(float x, float y, float z,
 
     lh = l * 0.5;
 
-    GLfloat triangles[] {
+    GLfloat triangles[] = {
             x+lh, y+hh, z,
             x+lh, y-hh, z-bh,
             x+lh, y-hh, z+bh,
@@ -178,56 +180,85 @@ void drawRoof(float x, float y, float z,
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-
-void drawChimney(const float k){
+void drawChimney(const float k) {
     setDrawingColor(GREY);
     drawCube(0.5 * k, 0.65 * k, 0.3 * k, 0.15 * k); // chimney bottom part
     drawCube(0.5 * k, 0.8 * k, 0.3 * k, 0.15 * k); // chimney top part
 }
 
-void drawDoor(const float k){
+void drawDoor(const float k) {
     setDrawingColor(BROWN);
-    glRotatef(90, 0, k, 0);
-    glTranslatef(0, 0, k + 0.01);
-    glRectf(-0.15 * k, -0.5 * k, 0.15 * k, 0.1 * k);
-    setDrawingColor(YELLOW);
-    glTranslatef(-0.1 * k, -0.2 * k, 0.008);
-    glutSolidSphere(0.02f * k, 10, 10);
+
+    // Check if the door is open or closed
+    if (isDoorClosed) {
+        glRotatef(90, 0, k, 0);
+        glTranslatef(0, 0, k + 0.01);
+        glRectf(-0.15 * k, -0.5 * k, 0.15 * k, 0.1 * k);
+        setDrawingColor(YELLOW);
+        glTranslatef(-0.1 * k, -0.2 * k, 0.008);
+        glutSolidSphere(0.02f * k, 10, 10);
+    } else {
+        // Closed door
+        glRectf(-0.15 * k, -0.5 * k, 0.15 * k, 0.1 * k);
+        setDrawingColor(YELLOW);
+        glTranslatef(-0.1 * k, -0.2 * k, 0.008);
+        glutSolidSphere(0.02f * k, 10, 10);
+    }
 }
 
-void drawBottomFloor(const float k){
+void drawBottomFloor(const float k) {
     setDrawingColor(WHITE);
     drawCuboid(0, 0, 0, 2 * k, 1 * k, 2 * k);
 }
 
-void drawSeparator(const float k){
+void drawSeparator(const float k) {
     applyTranslationRotation();
     setDrawingColor(BLACK);
     drawCuboid(0, 0.52 * k, 0, 2 * k, 0.04 * k, 2 * k);
 }
 
-
-
-void drawTopWindows(const float k){
+void drawTopWindows(const float k) {
     setDrawingColor(BLUE);
     float windowWidth = 0.4 * k;
     float windowHeight = 0.4 * k;
     float windowDepth = 0.05 * k;
 
-    glPushMatrix();
-    glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
-    glRotatef(90, 0, 1, 0);
-    drawCuboid(0*k, 0, 0.65 * k, windowWidth, windowHeight, windowDepth);
-    glPopMatrix();
+    if (areWindowsClosed) {
+        // First window
+        glPushMatrix();
+        glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0 * k, 0, 0.65 * k, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
-    glRotatef(90, 0, 1, 0);
-    drawCuboid(0.8*k, 0, 0.65 * k, windowWidth, windowHeight, windowDepth);
-    glPopMatrix();
+        // Second window
+        glPushMatrix();
+        glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0.8 * k, 0, 0.65 * k, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // third window
+        glPushMatrix();
+        glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0.8 * k, 0, -1.4 * k, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // third window
+        glPushMatrix();
+        glTranslatef(0.35 * k, 1.25 * k, 0.4 * k);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0 * k, 0, -1.4* k, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+    } else {
+        // Closed windows
+        // Draw closed windows or any other design when windows are closed
+    }
 }
 
-void drawSecondFloor(const float k){
+void drawSecondFloor(const float k) {
     setDrawingColor(WHITE);
     drawCuboid(0, 1.05 * k, 0, 2 * k, 1 * k, 2 * k);
     drawTopWindows(k);
@@ -253,8 +284,6 @@ void drawHouse(const float k) {
 
     glPopMatrix();
 }
-
-
 
 void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -307,6 +336,10 @@ void processNormalKeys(unsigned char key, int x, int y) {
             if (SCALE > threshold)
                 SCALE -= threshold;
             break;
+        case 'o':
+            isDoorClosed = !isDoorClosed;
+            areWindowsClosed = !areWindowsClosed;
+            break;
     }
 }
 
@@ -337,6 +370,9 @@ void processSpecialKeys(int key, int x, int y) {
             break;
         case GLUT_KEY_DOWN:
             K -= threshold;
+            break;
+        case 'w':
+            areWindowsClosed = !areWindowsClosed;
             break;
     }
 }
