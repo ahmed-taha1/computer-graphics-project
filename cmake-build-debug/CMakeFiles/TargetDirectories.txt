@@ -1,5 +1,3 @@
 F:/education/32/Computer Graphics/project/cmake-build-debug/CMakeFiles/main.dir
-F:/education/32/Computer Graphics/project/cmake-build-debug/CMakeFiles/testing.dir
-F:/education/32/Computer Graphics/project/cmake-build-debug/CMakeFiles/testing2.dir
 F:/education/32/Computer Graphics/project/cmake-build-debug/CMakeFiles/edit_cache.dir
 F:/education/32/Computer Graphics/project/cmake-build-debug/CMakeFiles/rebuild_cache.dir

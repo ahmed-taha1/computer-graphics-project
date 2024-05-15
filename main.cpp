@@ -1,106 +1,238 @@
-#include <Windows.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
-#pragma comment(lib,"opengl32.lib")
-#pragma comment(lib,"glu32.lib")
+#include <cstdlib>
+#include <GL/glut.h>
+#include <cmath>
+#include "ui_components/cuboid_drawer.cpp"
+#include "ui_components/roof_drawer.cpp"
+#include "ui_components/door_drawer.cpp"
 
-LRESULT WINAPI WndProc(HWND hwnd, UINT m, WPARAM wp, LPARAM lp)
-{
-    static PIXELFORMATDESCRIPTOR pfd = {
-            sizeof(PIXELFORMATDESCRIPTOR),   // size of this pfd
-            1,                     // version number
-            PFD_DRAW_TO_WINDOW |   // support window
-            PFD_SUPPORT_OPENGL |   // support OpenGL
-            PFD_DOUBLEBUFFER,      // double buffered
-            PFD_TYPE_RGBA,         // RGBA type
-            24,                    // 24-bit color depth
-            0, 0, 0, 0, 0, 0,      // color bits ignored
-            0,                     // no alpha buffer
-            0,                     // shift bit ignored
-            0,                     // no accumulation buffer
-            0, 0, 0, 0,            // accum bits ignored
-            32,                    // 32-bit z-buffer
-            0,                     // no stencil buffer
-            0,                     // no auxiliary buffer
-            PFD_MAIN_PLANE,        // main layer
-            0,                     // reserved
-            0, 0, 0                // layer masks ignored
-    };
-    static HDC hdc;
-    static HGLRC hgl;
-    static int x[3], y[3],w,h;
-    static int count = 0;
-    int  iPixelFormat;
-    switch (m)
-    {
-        case WM_CREATE:
-            hdc = GetDC(hwnd);
-            iPixelFormat = ChoosePixelFormat(hdc, &pfd);
-            SetPixelFormat(hdc, iPixelFormat, &pfd);
-            hgl=wglCreateContext(hdc);
-            wglMakeCurrent(hdc,hgl);
-            glClearColor(0, 0, 0, 0);
-            break;
-        case WM_SIZE:
-            w = LOWORD(lp);
-            h = HIWORD(lp);
-            glViewport(0, 0, w, h);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glFlush();
-            SwapBuffers(hdc);
-            break;
-        case WM_LBUTTONDOWN:
-            x[count] = LOWORD(lp);
-            y[count] = HIWORD(lp);
-            if (count == 2)
-            {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glBegin(GL_TRIANGLES);
-                glColor3f(1, 0, 0);
-                glVertex2d(2.0 * x[0] / w - 1, 1 - 2.0 * y[0] / h);
-                glColor3f(0, 1, 0);
-                glVertex2d(2.0 * x[1] / w - 1, 1 - 2.0 * y[1] / h);
-                glColor3f(0, 0, 1);
-                glVertex2d(2.0 * x[2] / w - 1, 1 - 2.0 * y[2] / h);
-                glEnd();
-                glFlush();
-                SwapBuffers(hdc);
-                count = 0;
-            }
-            else count++;
-            break;
-        case WM_DESTROY:
-            wglMakeCurrent(NULL, NULL);
-            wglDeleteContext(hgl);
-            ReleaseDC(hwnd, hdc);
-            PostQuitMessage(0);
-            break;
-        default: return DefWindowProc(hwnd, m, wp, lp);
-    }
-    return 0;
+double camX = 6.0f, camY = 3.0f, camZ = 2.0f;
+
+double angleH = 1.5;
+double angleV = 0.5;
+double camDistance = 6.0;
+
+bool areWindowsClosed = true;
+bool isDoorClosed = true;
+
+void updateCameraPosition() {
+    camX = camDistance * sin(angleH) * cos(angleV);
+    camY = camDistance * sin(angleV);
+    camZ = camDistance * cos(angleH) * cos(angleV);
 }
-int APIENTRY WinMain(HINSTANCE hi, HINSTANCE pi, LPSTR c, int ns)
-{
-    WNDCLASS wc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-    wc.hInstance = hi;
-    wc.lpfnWndProc = WndProc;
-    wc.lpszClassName = "MyClass";
-    wc.lpszMenuName = NULL;
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    RegisterClass(&wc);
-    HWND hwnd = CreateWindow("MyClass", "Hello World", WS_OVERLAPPEDWINDOW, 0, 0, 600, 400, NULL, NULL, hi, 0);
-    ShowWindow(hwnd, ns);
-    UpdateWindow(hwnd);
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+
+
+void changeSize(int w, int h) {
+    if (h == 0)
+        h = 1;
+    double ratio = w * 1.0 / h;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, w, h);
+    gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+
+
+
+void drawBottomFloor() {
+    setDrawingColor(WHITE);
+    drawCuboid(0, 0, 0, 2, 1, 2);
+}
+
+void drawSeparator() {
+    setDrawingColor(BLACK);
+    drawCuboid(0, 0.52, 0, 2, 0.04, 2);
+}
+
+void drawTopWindows() {
+    setDrawingColor(BLUE);
+    float windowWidth = 0.4;
+    float windowHeight = 0.4;
+    float windowDepth = 0.05;
+
+    if (areWindowsClosed) {
+        // First window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, 0.4);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0, 0, 0.65, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // Second window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, 0.4);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0.8, 0, 0.65, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // third window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, 0.4);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0.8, 0, -1.4, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // fourth window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, 0.4);
+        glRotatef(90, 0, 1, 0);
+        drawCuboid(0, 0, -1.4, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+    } else {
+        // first window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, -0.4);
+        glRotatef(45, 0, 1, 0);
+        drawCuboid(0, 0, 1.2, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // Second window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, -0.4);
+        glRotatef(45, 0, 1, 0);
+        drawCuboid(0.8, 0, 0.4, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // third window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, 0.4);
+        glRotatef(125, 0, 1, 0);
+        drawCuboid(0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
+
+        // fourth window
+        glPushMatrix();
+        glTranslatef(0.35, 1.25, -0.4);
+        glRotatef(60, 0, 1, 0);
+        drawCuboid(-0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
+        glPopMatrix();
     }
+}
+
+void drawSecondFloor() {
+    setDrawingColor(WHITE);
+    drawCuboid(0, 1.05, 0, 2, 1, 2);
+    drawTopWindows();
+}
+
+void drawHouse() {
+    glPushMatrix();
+    drawBottomFloor();
+    drawDoor(isDoorClosed);
+    glPopMatrix();
+
+    glPushMatrix();
+    drawSeparator();
+    glPopMatrix();
+
+    glPushMatrix();
+    drawSecondFloor();
+
+    drawRoof(0, 1.8f, 0, 2.0f, 2, 0.5f);
+
+    glPopMatrix();
+}
+
+void renderScene() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glLoadIdentity();
+    updateCameraPosition();
+    gluLookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+    drawHouse();
+
+    setDrawingColor(GREEN);
+    glBegin(GL_QUADS);
+    glVertex3f(-5, -0.5, -5);
+    glVertex3f(-5, -0.5,  5);
+    glVertex3f( 5, -0.5,  5);
+    glVertex3f( 5, -0.5, -5);
+    glEnd();
+
+    glutSwapBuffers();
+}
+
+void processNormalKeys(unsigned char key, int x, int y) {
+    double zoomThreshold = 0.1f;
+
+    switch (key) {
+        case 27:
+            exit(0);
+        case 'q':
+            // Zoom in
+        case '+':
+            camDistance -= zoomThreshold;
+            break;
+            // Zoom out
+        case '-':
+            camDistance += zoomThreshold;
+            break;
+            // Open door
+        case 'o':
+            isDoorClosed = false;
+            break;
+            // Close door
+        case 'c':
+            isDoorClosed = true;
+            break;
+            // Open windows
+        case 'O':
+            areWindowsClosed = false;
+            break;
+            // Close windows
+        case 'C':
+            areWindowsClosed = true;
+            break;
+        default:
+            break;
+    }
+}
+
+void processSpecialKeys(int key, int x, int y) {
+    double rotationThreshold = 0.05f;
+    double elevationThreshold = 0.05f;
+
+    switch (key) {
+        // move camera left
+        case GLUT_KEY_LEFT:
+            angleH -= rotationThreshold;
+            break;
+            // move camera right
+        case GLUT_KEY_RIGHT:
+            angleH += rotationThreshold;
+            break;
+        case GLUT_KEY_UP:
+            angleV += elevationThreshold;
+            if (angleV > 1.5f) angleV = 1.5f; // Limit the elevation angle
+            break;
+        case GLUT_KEY_DOWN:
+            angleV -= elevationThreshold;
+            if (angleV < -1.5f) angleV = -1.5f; // Limit the elevation angle
+            break;
+        default:
+            break;
+    }
+}
+
+int main(int argc, char **argv) {
+    int w = 1280;
+    int h = 720;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize(w, h);
+    glutCreateWindow("House and Bicycle");
+
+    glutDisplayFunc(renderScene);
+    glutReshapeFunc(changeSize);
+    glutIdleFunc(renderScene);
+    glutKeyboardFunc(processNormalKeys);
+    glutSpecialFunc(processSpecialKeys);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glutMainLoop();
     return 0;
 }

@@ -73,72 +73,6 @@ build main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/main.cpp.o
   TARGET_IMPLIB = libmain.dll.a
   TARGET_PDB = main.exe.dbg
 
-# =============================================================================
-# Object build statements for EXECUTABLE target testing
-
-
-#############################################
-# Order-only phony target for testing
-
-build cmake_object_order_depends_target_testing: phony || CMakeFiles/testing.dir
-
-build CMakeFiles/testing.dir/testing.cpp.obj: CXX_COMPILER__testing_unscanned_Debug F$:/education/32/Computer$ Graphics/project/testing.cpp || cmake_object_order_depends_target_testing
-  DEP_FILE = CMakeFiles\testing.dir\testing.cpp.obj.d
-  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\testing.dir
-  OBJECT_FILE_DIR = CMakeFiles\testing.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target testing
-
-
-#############################################
-# Link the executable testing.exe
-
-build testing.exe: CXX_EXECUTABLE_LINKER__testing_Debug CMakeFiles/testing.dir/testing.cpp.obj | C$:/MinGW/lib/libfreeglut.a
-  FLAGS = -g
-  LINK_LIBRARIES = -lglu32  C:/MinGW/lib/libfreeglut.a  -lopengl32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\testing.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = testing.exe
-  TARGET_IMPLIB = libtesting.dll.a
-  TARGET_PDB = testing.exe.dbg
-
-# =============================================================================
-# Object build statements for EXECUTABLE target testing2
-
-
-#############################################
-# Order-only phony target for testing2
-
-build cmake_object_order_depends_target_testing2: phony || CMakeFiles/testing2.dir
-
-build CMakeFiles/testing2.dir/testing2.cpp.obj: CXX_COMPILER__testing2_unscanned_Debug F$:/education/32/Computer$ Graphics/project/testing2.cpp || cmake_object_order_depends_target_testing2
-  DEP_FILE = CMakeFiles\testing2.dir\testing2.cpp.obj.d
-  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\testing2.dir
-  OBJECT_FILE_DIR = CMakeFiles\testing2.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target testing2
-
-
-#############################################
-# Link the executable testing2.exe
-
-build testing2.exe: CXX_EXECUTABLE_LINKER__testing2_Debug CMakeFiles/testing2.dir/testing2.cpp.obj | C$:/MinGW/lib/libfreeglut.a
-  FLAGS = -g
-  LINK_LIBRARIES = -lglu32  C:/MinGW/lib/libfreeglut.a  -lopengl32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\testing2.dir
-  POST_BUILD = cd .
-  PRE_LINK = cd .
-  TARGET_FILE = testing2.exe
-  TARGET_IMPLIB = libtesting2.dll.a
-  TARGET_PDB = testing2.exe.dbg
-
 
 #############################################
 # Utility command for edit_cache
@@ -167,10 +101,6 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build main: phony main.exe
 
-build testing: phony testing.exe
-
-build testing2: phony testing2.exe
-
 # =============================================================================
 # Folder targets.
 
@@ -179,7 +109,7 @@ build testing2: phony testing2.exe
 #############################################
 # Folder: F:/education/32/Computer Graphics/project/cmake-build-debug
 
-build all: phony main.exe testing.exe testing2.exe
+build all: phony main.exe
 
 # =============================================================================
 # Built-in targets
