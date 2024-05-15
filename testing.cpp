@@ -28,7 +28,6 @@ struct RGBColor {
 float X = 0, Y = 0, Z = 0;
 // Rotation
 float I = 0, J = 0, K = 0;
-float SCALE = 1;
 
 bool isDoorClosed = true;
 bool areWindowsClosed = true;
@@ -190,132 +189,125 @@ void drawRoof(float x, float y, float z, float b, float l, float h) {
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void drawDoor(const float k) {
+void drawDoor() {
     setDrawingColor(BROWN);
-    float doorWidth = 0.4f * k;
-    float doorHeight = 0.7f * k;
-    float doorDepth = 0.05f * k;
+    float doorWidth = 0.4;
+    float doorHeight = 0.7;
+    float doorDepth = 0.05;
 
     // Check if the door is open or closed
     if (isDoorClosed) {
-//        glRotatef(90, 0, k, 0);
-//        glTranslatef(0, 0, k + 0.01f);
-//        glRectf(-0.15f * k, -0.5f * k, 0.15f * k, 0.1f * k);
-//        setDrawingColor(YELLOW);
-//        glTranslatef(-0.1f * k, -0.2f * k, 0.008);
-//        glutSolidSphere(0.02f * k, 10, 10);
-
         // Draw closed door
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(90, 0, 1, 0);
-        drawCuboid(0.4f * k, -1.4f * k, 0.65f * k, doorWidth, doorHeight, doorDepth);
+        drawCuboid(0.4, -1.4, 0.65, doorWidth, doorHeight, doorDepth);
     } else {
         // opened door
-        glTranslatef(0.35f * k, 1.25f * k, -0.4f * k);
+        glTranslatef(0.35, 1.25, -0.4);
         glRotatef(45, 0, 1, 0);
-        drawCuboid(0.4f * k, -1.4f * k, 0.65f * k, doorWidth, doorHeight, doorDepth);
+        drawCuboid(0.4, -1.4, 0.65, doorWidth, doorHeight, doorDepth);
     }
 }
 
-void drawBottomFloor(const float k) {
+void drawBottomFloor() {
     setDrawingColor(WHITE);
-    drawCuboid(0, 0, 0, 2 * k, 1 * k, 2 * k);
+    drawCuboid(0, 0, 0, 2, 1, 2);
 }
 
-void drawSeparator(const float k) {
+void drawSeparator() {
     applyTranslationRotation();
     setDrawingColor(BLACK);
-    drawCuboid(0, 0.52f * k, 0, 2 * k, 0.04f * k, 2 * k);
+    drawCuboid(0, 0.52, 0, 2, 0.04, 2);
 }
 
-void drawTopWindows(const float k) {
+void drawTopWindows() {
     setDrawingColor(BLUE);
-    float windowWidth = 0.4f * k;
-    float windowHeight = 0.4f * k;
-    float windowDepth = 0.05f * k;
+    float windowWidth = 0.4;
+    float windowHeight = 0.4;
+    float windowDepth = 0.05;
 
     if (areWindowsClosed) {
         // First window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(90, 0, 1, 0);
-        drawCuboid(0, 0, 0.65f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0, 0, 0.65, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // Second window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(90, 0, 1, 0);
-        drawCuboid(0.8f * k, 0, 0.65f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0.8, 0, 0.65, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // third window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(90, 0, 1, 0);
-        drawCuboid(0.8f * k, 0, -1.4f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0.8, 0, -1.4, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // fourth window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(90, 0, 1, 0);
-        drawCuboid(0 * k, 0, -1.4f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0, 0, -1.4, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
     } else {
         // first window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, -0.4f * k);
+        glTranslatef(0.35, 1.25, -0.4);
         glRotatef(45, 0, 1, 0);
-        drawCuboid(0, 0, 1.2f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0, 0, 1.2, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // Second window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, -0.4f * k);
+        glTranslatef(0.35, 1.25, -0.4);
         glRotatef(45, 0, 1, 0);
-        drawCuboid(0.8f * k, 0, 0.4f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0.8, 0, 0.4, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // third window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, 0.4f * k);
+        glTranslatef(0.35, 1.25, 0.4);
         glRotatef(125, 0, 1, 0);
-        drawCuboid(0.8f * k, 0, -1.3f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
 
         // fourth window
         glPushMatrix();
-        glTranslatef(0.35f * k, 1.25f * k, -0.4f * k);
+        glTranslatef(0.35, 1.25, -0.4);
         glRotatef(60, 0, 1, 0);
-        drawCuboid(-0.8f * k, 0, -1.3f * k, windowWidth, windowHeight, windowDepth);
+        drawCuboid(-0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
         glPopMatrix();
     }
 }
 
-void drawSecondFloor(const float k) {
+void drawSecondFloor() {
     setDrawingColor(WHITE);
-    drawCuboid(0, 1.05f * k, 0, 2 * k, 1 * k, 2 * k);
-    drawTopWindows(k);
+    drawCuboid(0, 1.05, 0, 2, 1, 2);
+    drawTopWindows();
 }
 
-void drawHouse(const float k) {
+void drawHouse() {
     glPushMatrix();
     applyTranslationRotation();
-    drawBottomFloor(k);
-    drawDoor(k);
+    drawBottomFloor();
+    drawDoor();
     glPopMatrix();
 
     glPushMatrix();
-    drawSeparator(k);
+    drawSeparator();
     glPopMatrix();
 
     glPushMatrix();
     applyTranslationRotation();
-    drawSecondFloor(k);
+    drawSecondFloor();
 
-    drawRoof(0, 1.8f * k, 0, 2.0f * k, 2 * k, 0.5f * k);
+    drawRoof(0, 1.8f, 0, 2.0f, 2, 0.5f);
 
     glPopMatrix();
 }
@@ -328,7 +320,7 @@ void renderScene() {
     updateCameraPosition();
     // Look from the new camera position towards the origin
     gluLookAt(camX, camY, camZ, lookX, lookY, lookZ, 0, 1, 0);
-    drawHouse(SCALE);
+    drawHouse();
 
     setDrawingColor(GREEN);
     glBegin(GL_QUADS);
