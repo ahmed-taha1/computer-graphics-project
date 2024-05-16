@@ -1,9 +1,7 @@
-#ifndef CUBOID_DRAWER_CPP
-#define CUBOID_DRAWER_CPP
-
 #include <GL/glut.h>
+#include "cuboid.h"
 
-void drawCuboid(float x, float y, float z, float width, float height, float depth) {
+void Cuboid::drawCuboid(float x, float y, float z, float width, float height, float depth) {
     GLfloat vertices[] = {
             // Front face
             x - width / 2, y - height / 2, z + depth / 2,
@@ -41,6 +39,5 @@ void drawCuboid(float x, float y, float z, float width, float height, float dept
     glVertexPointer(3, GL_FLOAT, 0, vertices);
     glDrawArrays(GL_QUADS, 0, 24);
     glDisableClientState(GL_VERTEX_ARRAY);
-}
 
-#endif
+}

@@ -55,6 +55,24 @@ build CMakeFiles/main.dir/main.cpp.obj: CXX_COMPILER__main_unscanned_Debug F$:/e
   OBJECT_DIR = CMakeFiles\main.dir
   OBJECT_FILE_DIR = CMakeFiles\main.dir
 
+build CMakeFiles/main.dir/ui_components/cuboid/cuboid.cpp.obj: CXX_COMPILER__main_unscanned_Debug F$:/education/32/Computer$ Graphics/project/ui_components/cuboid/cuboid.cpp || cmake_object_order_depends_target_main
+  DEP_FILE = CMakeFiles\main.dir\ui_components\cuboid\cuboid.cpp.obj.d
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\ui_components\cuboid
+
+build CMakeFiles/main.dir/ui_components/house/house.cpp.obj: CXX_COMPILER__main_unscanned_Debug F$:/education/32/Computer$ Graphics/project/ui_components/house/house.cpp || cmake_object_order_depends_target_main
+  DEP_FILE = CMakeFiles\main.dir\ui_components\house\house.cpp.obj.d
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\ui_components\house
+
+build CMakeFiles/main.dir/colors/colors.cpp.obj: CXX_COMPILER__main_unscanned_Debug F$:/education/32/Computer$ Graphics/project/colors/colors.cpp || cmake_object_order_depends_target_main
+  DEP_FILE = CMakeFiles\main.dir\colors\colors.cpp.obj.d
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\colors
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target main
@@ -63,7 +81,7 @@ build CMakeFiles/main.dir/main.cpp.obj: CXX_COMPILER__main_unscanned_Debug F$:/e
 #############################################
 # Link the executable main.exe
 
-build main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/main.cpp.obj | C$:/MinGW/lib/libfreeglut.a
+build main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/main.cpp.obj CMakeFiles/main.dir/ui_components/cuboid/cuboid.cpp.obj CMakeFiles/main.dir/ui_components/house/house.cpp.obj CMakeFiles/main.dir/colors/colors.cpp.obj | C$:/MinGW/lib/libfreeglut.a
   FLAGS = -g
   LINK_LIBRARIES = -lglu32  C:/MinGW/lib/libfreeglut.a  -lopengl32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\main.dir

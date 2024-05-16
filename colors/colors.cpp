@@ -1,28 +1,7 @@
-#ifndef COLOR_CPP
-#define COLOR_CPP
-
+#include "colors.h"
 #include <GL/glut.h>
 
-enum Color {
-    WHITE,
-    BROWN,
-    ORANGE,
-    GREY,
-    BLUE,
-    DARK_GREY,
-    YELLOW,
-    GREEN,
-    BLACK
-};
-
-struct RGBColor {
-    float red;
-    float green;
-    float blue;
-};
-
-
-RGBColor colorFactory(Color c) {
+RGBColor Colors::colorFactory(Color c) {
     switch(c) {
         case WHITE:
             return {0.90, 0.90, 0.90};
@@ -47,10 +26,7 @@ RGBColor colorFactory(Color c) {
 }
 
 
-void setDrawingColor(Color color) {
+void Colors::setDrawingColor(Color color) {
     RGBColor drawingColor = colorFactory(color);
     glColor3f(drawingColor.red, drawingColor.green, drawingColor.blue);
 }
-
-
-#endif

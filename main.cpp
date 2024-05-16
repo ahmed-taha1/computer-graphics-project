@@ -1,9 +1,8 @@
 #include <cstdlib>
 #include <GL/glut.h>
 #include <cmath>
-#include "ui_components/cuboid_drawer.cpp"
-#include "ui_components/roof_drawer.cpp"
-#include "ui_components/door_drawer.cpp"
+#include "ui_components/house/house.h"
+#include "colors/colors.h"
 
 double camX = 6.0f, camY = 3.0f, camZ = 2.0f;
 
@@ -20,7 +19,6 @@ void updateCameraPosition() {
     camZ = camDistance * cos(angleH) * cos(angleV);
 }
 
-
 void changeSize(int w, int h) {
     if (h == 0)
         h = 1;
@@ -35,120 +33,22 @@ void changeSize(int w, int h) {
 
 
 
-void drawBottomFloor() {
-    setDrawingColor(WHITE);
-    drawCuboid(0, 0, 0, 2, 1, 2);
-}
-
-void drawSeparator() {
-    setDrawingColor(BLACK);
-    drawCuboid(0, 0.52, 0, 2, 0.04, 2);
-}
-
-void drawTopWindows() {
-    setDrawingColor(BLUE);
-    float windowWidth = 0.4;
-    float windowHeight = 0.4;
-    float windowDepth = 0.05;
-
-    if (areWindowsClosed) {
-        // First window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, 0.4);
-        glRotatef(90, 0, 1, 0);
-        drawCuboid(0, 0, 0.65, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // Second window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, 0.4);
-        glRotatef(90, 0, 1, 0);
-        drawCuboid(0.8, 0, 0.65, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // third window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, 0.4);
-        glRotatef(90, 0, 1, 0);
-        drawCuboid(0.8, 0, -1.4, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // fourth window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, 0.4);
-        glRotatef(90, 0, 1, 0);
-        drawCuboid(0, 0, -1.4, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-    } else {
-        // first window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, -0.4);
-        glRotatef(45, 0, 1, 0);
-        drawCuboid(0, 0, 1.2, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // Second window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, -0.4);
-        glRotatef(45, 0, 1, 0);
-        drawCuboid(0.8, 0, 0.4, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // third window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, 0.4);
-        glRotatef(125, 0, 1, 0);
-        drawCuboid(0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-
-        // fourth window
-        glPushMatrix();
-        glTranslatef(0.35, 1.25, -0.4);
-        glRotatef(60, 0, 1, 0);
-        drawCuboid(-0.8, 0, -1.3, windowWidth, windowHeight, windowDepth);
-        glPopMatrix();
-    }
-}
-
-void drawSecondFloor() {
-    setDrawingColor(WHITE);
-    drawCuboid(0, 1.05, 0, 2, 1, 2);
-    drawTopWindows();
-}
-
-void drawHouse() {
-    glPushMatrix();
-    drawBottomFloor();
-    drawDoor(isDoorClosed);
-    glPopMatrix();
-
-    glPushMatrix();
-    drawSeparator();
-    glPopMatrix();
-
-    glPushMatrix();
-    drawSecondFloor();
-
-    drawRoof(0, 1.8f, 0, 2.0f, 2, 0.5f);
-
-    glPopMatrix();
-}
-
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
     updateCameraPosition();
     gluLookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
-    drawHouse();
 
-    setDrawingColor(GREEN);
+    House::drawHouse(isDoorClosed, areWindowsClosed);
+
+    Colors::setDrawingColor(Color::GREEN);
     glBegin(GL_QUADS);
     glVertex3f(-5, -0.5, -5);
     glVertex3f(-5, -0.5,  5);
     glVertex3f( 5, -0.5,  5);
     glVertex3f( 5, -0.5, -5);
+
     glEnd();
 
     glutSwapBuffers();
@@ -216,6 +116,7 @@ void processSpecialKeys(int key, int x, int y) {
     }
 }
 
+
 int main(int argc, char **argv) {
     int w = 1280;
     int h = 720;
@@ -236,3 +137,12 @@ int main(int argc, char **argv) {
     glutMainLoop();
     return 0;
 }
+
+
+
+
+
+
+
+
+
